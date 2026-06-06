@@ -615,7 +615,7 @@ function drawConnectionLabel(
 function drawActiveNodeCard(
     ctx: CanvasRenderingContext2D,
     width: number,
-    height: number,
+    _height: number,
     snapshot: NetworkSnapshot,
     controller: TraceController
 ) {

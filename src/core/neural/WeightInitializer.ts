@@ -8,9 +8,7 @@ export class HeInitializer implements WeightInitializer {
 
   constructor(private rng: SeededRandom) {}
 
-  initialize(fanIn: number, fanOut: number): number {
-
-    fanOut = 0
+  initialize(fanIn: number, _fanOut: number): number {
     
     const std = Math.sqrt(2 / fanIn)
 
