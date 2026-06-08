@@ -521,7 +521,9 @@ function App() {
 						controller={controller}
 						selectedWeightId={selectedWeightId}
 						selectedWeightValue={selectedWeightValue}
+						selectedBiasId={selectedBiasId}
 						onSelectedWeightChange={setSelectedWeightId}
+						onSelectedBiasChange={setSelectedBiasId}
 						onWeightValueChange={handleWeightValueChange}
 						canEditWeights={!hasStarted}
 						inputs={inputs}

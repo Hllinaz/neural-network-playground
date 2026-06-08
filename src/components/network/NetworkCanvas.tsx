@@ -20,7 +20,9 @@ interface Props {
     controller: TraceController
     selectedWeightId: string
     selectedWeightValue: number
+    selectedBiasId: string
     onSelectedWeightChange: (value: string) => void
+    onSelectedBiasChange: (value: string) => void
     onWeightValueChange: (value: number) => void
     canEditWeights: boolean
     inputs: number[]
@@ -33,7 +35,9 @@ export function NetworkCanvas({
     snapshot,
     controller,
     selectedWeightId,
+    selectedBiasId,
     onSelectedWeightChange,
+    onSelectedBiasChange,
     inputs,
     outputs,
     onInputChange,
@@ -74,16 +78,17 @@ export function NetworkCanvas({
             displayHeight,
             snapshot,
             controller,
-            selectedWeightId
+            selectedWeightId,
+            selectedBiasId
         )
 
-    }, [snapshot, controller, selectedWeightId])
+    }, [snapshot, controller, selectedWeightId, selectedBiasId])
 
     return (
         <div className="network-canvas-frame">
             <canvas
                 ref={canvasRef}
-                className="network-canvas can-select-weights"
+                className="network-canvas can-select-values"
                 onClick={(event) => {
                     const canvas = canvasRef.current
 
@@ -92,6 +97,20 @@ export function NetworkCanvas({
                     const rect = canvas.getBoundingClientRect()
                     const x = event.clientX - rect.left
                     const y = event.clientY - rect.top
+
+                    const nodeBiasId = findBiasNodeAtPoint(
+                        snapshot,
+                        x,
+                        y,
+                        rect.width,
+                        rect.height
+                    )
+
+                    if (nodeBiasId) {
+                        onSelectedBiasChange(nodeBiasId)
+                        return
+                    }
+
                     const connectionId = findConnectionAtPoint(
                         snapshot,
                         x,
@@ -209,7 +228,8 @@ function drawNetwork(
     height: number,
     snapshot: NetworkSnapshot,
     controller: TraceController,
-    selectedWeightId: string
+    selectedWeightId: string,
+    selectedBiasId: string
 ) {
 
     ctx.clearRect(0, 0, width, height)
@@ -222,7 +242,7 @@ function drawNetwork(
 
     drawConnections(ctx, width, height, snapshot, controller, selectedWeightId)
 
-    drawNodes(ctx, width, height, snapshot, controller)
+    drawNodes(ctx, width, height, snapshot, controller, selectedBiasId)
 
     drawActiveNodeCard(ctx, width, height, snapshot, controller)
 
@@ -268,7 +288,8 @@ function drawNodes(
     width: number,
     height: number,
     snapshot: NetworkSnapshot,
-    controller: TraceController
+    controller: TraceController,
+    selectedBiasId: string
 ) {
 
     const structure = snapshot.layers.map(layer => layer.nodes.length)
@@ -291,7 +312,8 @@ function drawNodes(
                 y,
                 node,
                 controller,
-                snapshot.layers.length
+                snapshot.layers.length,
+                biasId(node.layerIndex, node.nodeIndex) === selectedBiasId
             )
         }
     }
@@ -303,7 +325,8 @@ function drawNode(
     y: number,
     node: NodeSnapshot,
     controller: TraceController,
-    totalLayers: number
+    totalLayers: number,
+    isSelectedBias: boolean
 ) {
 
     const state = getNodeState(
@@ -317,6 +340,7 @@ function drawNode(
     let radius = 22
     let border = THEME.node.border
     let shadow = 0
+    let lineWidth = 1.5
 
     switch (state) {
 
@@ -332,6 +356,12 @@ function drawNode(
             break
     }
 
+    if (isSelectedBias) {
+        border = "#f97316"
+        lineWidth = 3
+        shadow = Math.max(shadow, 8)
+    }
+
     ctx.beginPath()
     ctx.arc(x, y, radius, 0, Math.PI * 2)
     ctx.fillStyle = fill
@@ -340,8 +370,20 @@ function drawNode(
     ctx.fill()
     ctx.shadowBlur = 0
     ctx.strokeStyle = border
-    ctx.lineWidth = 1.5
+    ctx.lineWidth = lineWidth
     ctx.stroke()
+
+    if (isSelectedBias && node.layerIndex > 0) {
+        drawPill(
+            ctx,
+            `b ${formatShort(node.bias)}`,
+            x,
+            y - radius - 14,
+            "#fff7ed",
+            "#f97316",
+            "#c2410c"
+        )
+    }
 
     if (state !== "FUTURE") {
 
@@ -787,6 +829,42 @@ function findConnectionAtPoint(
     return closestDistance <= 12 ? closestId : ""
 }
 
+function findBiasNodeAtPoint(
+    snapshot: NetworkSnapshot,
+    x: number,
+    y: number,
+    width: number,
+    height: number
+) {
+    const structure = snapshot.layers.map(layer => layer.nodes.length)
+    const radius = 26
+
+    for (const layer of snapshot.layers) {
+        if (layer.layerIndex === 0) continue
+
+        for (const node of layer.nodes) {
+            const position = getNodePosition(
+                width,
+                height,
+                structure,
+                node.layerIndex,
+                node.nodeIndex
+            )
+
+            const distance = Math.hypot(
+                x - position.x,
+                y - position.y
+            )
+
+            if (distance <= radius) {
+                return biasId(node.layerIndex, node.nodeIndex)
+            }
+        }
+    }
+
+    return ""
+}
+
 function distanceToSegment(
     px: number,
     py: number,
@@ -821,6 +899,13 @@ function connectionId(
     targetNode: number
 ) {
     return `${sourceLayer}:${sourceNode}:${targetLayer}:${targetNode}`
+}
+
+function biasId(
+    layerIndex: number,
+    nodeIndex: number
+) {
+    return `${layerIndex}:${nodeIndex}`
 }
 
 function getNodePosition(
