@@ -71,7 +71,7 @@ function buildForwardContent(trace: ForwardNodeTrace, step: number) {
 This neuron receives a value directly from the dataset.
 
 $$
-a = x = ${format(trace.activation)}
+h = x = ${format(trace.activation)}
 $$
 `
     }
@@ -105,11 +105,11 @@ Node: layer ${trace.layerIndex}, neuron ${trace.nodeIndex}
 ## Formula
 
 $$
-z = \\sum_i w_i a_i + b
+z = \\sum_i w_i h_i + b
 $$
 
 $$
-a = f(z)
+h = f(z)
 $$
 
 ## Substitution
@@ -122,7 +122,7 @@ ${currentTerm ? `
 ## Current Term
 
 $$
-w_i a_i = ${format(currentTerm.weight)} \\times ${format(currentTerm.input)} = ${format(currentTerm.product)}
+w_i h_i = ${format(currentTerm.weight)} \\times ${format(currentTerm.input)} = ${format(currentTerm.product)}
 $$
 
 $$
@@ -142,7 +142,7 @@ ${visibleStep >= trace.terms.length + 1 ? `
 ## Activation
 
 $$
-a = f(${format(trace.z ?? 0)}) = ${format(trace.activation)}
+h = f(${format(trace.z ?? 0)}) = ${format(trace.activation)}
 $$
 ` : ""}
 `
@@ -199,7 +199,7 @@ Output node: layer ${trace.layerIndex}, neuron ${trace.nodeIndex}
 ## Formula
 
 $$
-\\delta = \\frac{\\partial L}{\\partial a} \\cdot f'(z)
+\\delta = \\frac{\\partial L}{\\partial h} \\cdot f'(z)
 $$
 
 ## Values
@@ -241,7 +241,7 @@ ${currentConnection ? `
 ## Current Connection
 
 $$
-\\frac{\\partial L}{\\partial w} = a_{prev} \\cdot \\delta_{next}
+\\frac{\\partial L}{\\partial w} = h_{prev} \\cdot \\delta_{next}
 $$
 
 $$
@@ -288,11 +288,11 @@ Select **Step** to see how each neuron computes its values.
 ## Forward
 
 $$
-z = \\sum_i w_i a_i + b
+z = \\sum_i w_i h_i + b
 $$
 
 $$
-a = f(z)
+h = f(z)
 $$
 
 ## Backward

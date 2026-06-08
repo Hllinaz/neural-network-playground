@@ -1,3 +1,5 @@
+neural-visualizer-wiki
+
 # Logs
 logs
 *.log
@@ -10,6 +12,7 @@ lerna-debug.log*
 node_modules
 dist
 dist-ssr
+wiki
 .env
 .vercel
 *.local
