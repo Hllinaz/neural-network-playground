@@ -1,6 +1,6 @@
 export class SeededRandom {
 
-    constructor(private seed: number) { }
+    constructor(private seed = 42) { }
 
     next(): number {
         let t = this.seed += 0x6D2B79F5

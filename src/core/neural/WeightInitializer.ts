@@ -27,3 +27,10 @@ export class XavierInitializer implements WeightInitializer {
     return this.rng.nextRange(-limit, limit)
   }
 }
+
+export class CustomInitializer implements WeightInitializer {
+
+  initialize(_fanIn: number, _fanOut: number): number {
+    return 0
+  }
+}

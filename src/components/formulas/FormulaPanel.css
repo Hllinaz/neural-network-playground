@@ -3,6 +3,7 @@
     border: 1px solid #e5e7eb;
     border-radius: 18px;
     padding: 24px;
+    min-height: 0;
     overflow-y: auto;
     overflow-x: hidden;
     color: #111827;

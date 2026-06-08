@@ -9,12 +9,12 @@ export class Node {
     output = 0
     z = 0
     delta = 0
-    bias = Math.random() * 2 - 1
 
     constructor(
         public activation: Activation | null, 
         public layerIndex: number, 
-        public nodeIndex: number) { }
+        public nodeIndex: number,
+        public bias = 0) { }
 
     forward() {
         let sum = this.bias

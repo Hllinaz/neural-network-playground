@@ -1,7 +1,11 @@
 import type { AnimationMode } from "../../core/trace/AnimationMode"
 import { Sigmoid, ReLU } from "../../core/neural/ActivationFunction"
 import { MSE } from "../../core/neural/LossFunction"
-import { HeInitializer, XavierInitializer } from "../../core/neural/WeightInitializer"
+import {
+    CustomInitializer,
+    HeInitializer,
+    XavierInitializer
+} from "../../core/neural/WeightInitializer"
 
 export const ACTIVATIONS = {
     sigmoid: Sigmoid,
@@ -14,8 +18,20 @@ export const LOSSES = {
 
 export const INITIALIZERS = {
     he: HeInitializer,
-    xavier: XavierInitializer
+    xavier: XavierInitializer,
+    personalizado: CustomInitializer
 }
+
+const AUTHORS = [
+    {
+        name: "Humberto J. Llinas M.",
+        email: "lhumberto@uninorte.edu.co"
+    },
+    {
+        name: "Dr. rer. nat. Humberto J. Llinas S.",
+        email: "hllinas@uninorte.edu.co"
+    }
+]
 
 import "./Sidebar.css"
 
@@ -25,12 +41,23 @@ export interface WeightOption {
     weight: number
 }
 
+export interface BiasOption {
+    id: string
+    label: string
+    bias: number
+}
+
 interface Props {
     mode: AnimationMode
 
     onModeChange: (mode: AnimationMode) => void
     onStep: () => void
+    onEpoch: () => void
     onReset: () => void
+    isPlaying: boolean
+    onPlayToggle: () => void
+    canDownloadTables: boolean
+    onGenerateTable: () => void
 
     learningRate: number
     onLearningRateChange: (value: number) => void
@@ -52,12 +79,25 @@ interface Props {
     selectedWeightValue: number
     onSelectedWeightChange: (value: string) => void
     onWeightValueChange: (value: number) => void
+    onSelectedWeightReset: () => void
     canEditWeights: boolean
+    canCustomizeInitializer: boolean
+
+    biasOptions: BiasOption[]
+    selectedBiasId: string
+    selectedBiasValue: number
+    onSelectedBiasChange: (value: string) => void
+    onBiasValueChange: (value: number) => void
+    onSelectedBiasReset: () => void
+    canEditBiases: boolean
 }
 
 export function Sidebar({
     mode, onModeChange, onStep,
-    onReset, learningRate, onLearningRateChange,
+    onEpoch, onReset, isPlaying, onPlayToggle,
+    canDownloadTables,
+    onGenerateTable,
+    learningRate, onLearningRateChange,
     architecture, onArchitectureChange,
     activation, onActivationChange,
     loss, onLossChange,
@@ -67,7 +107,16 @@ export function Sidebar({
     selectedWeightValue,
     onSelectedWeightChange,
     onWeightValueChange,
-    canEditWeights
+    onSelectedWeightReset,
+    canEditWeights,
+    canCustomizeInitializer,
+    biasOptions,
+    selectedBiasId,
+    selectedBiasValue,
+    onSelectedBiasChange,
+    onBiasValueChange,
+    onSelectedBiasReset,
+    canEditBiases
 }: Props) {
 
     return (
@@ -127,6 +176,7 @@ export function Sidebar({
 
             </div>
 
+            {canCustomizeInitializer && (
             <div className="sidebar-section">
 
                 <h3>Weights</h3>
@@ -166,6 +216,14 @@ export function Sidebar({
                     />
                 </div>
 
+                <button
+                    className="secondary"
+                    disabled={!canEditWeights}
+                    onClick={onSelectedWeightReset}
+                >
+                    Reset Weight
+                </button>
+
                 <p className="sidebar-hint">
                     {canEditWeights
                         ? "Edita el peso antes de iniciar la red."
@@ -173,6 +231,63 @@ export function Sidebar({
                 </p>
 
             </div>
+            )}
+
+            {canCustomizeInitializer && (
+            <div className="sidebar-section">
+
+                <h3>Biases</h3>
+
+                <div className="sidebar-field">
+                    <label>Node</label>
+
+                    <select
+                        value={selectedBiasId}
+                        disabled={!canEditBiases}
+                        onChange={(e) => onSelectedBiasChange(e.target.value)}
+                    >
+                        {biasOptions.map(option => (
+                            <option key={option.id} value={option.id}>
+                                {option.label}
+                            </option>
+                        ))}
+                    </select>
+                </div>
+
+                <div className="sidebar-field">
+                    <label>Initial Bias</label>
+
+                    <input
+                        type="number"
+                        step="0.01"
+                        disabled={!canEditBiases}
+                        value={Number.isFinite(selectedBiasValue)
+                            ? selectedBiasValue
+                            : 0}
+                        onChange={(e) => {
+                            const value = e.target.valueAsNumber
+
+                            if (Number.isFinite(value)) {
+                                onBiasValueChange(value)
+                            }
+                        }}
+                    />
+                </div>
+
+                <button
+                    className="secondary"
+                    disabled={!canEditBiases}
+                    onClick={onSelectedBiasReset}
+                >
+                    Reset Bias
+                </button>
+
+                <p className="sidebar-hint">
+                    Edita el bias antes de iniciar la red. Reset lo devuelve a 0.
+                </p>
+
+            </div>
+            )}
 
             <div className="sidebar-section">
 
@@ -188,6 +303,14 @@ export function Sidebar({
                         onChange={(e) => onLearningRateChange(Number(e.target.value))}
                     />
                 </div>
+
+                <button
+                    className="secondary"
+                    disabled={!canDownloadTables}
+                    onClick={onGenerateTable}
+                >
+                    Generate Table
+                </button>
             </div>
 
             <div className="sidebar-section">
@@ -231,9 +354,33 @@ export function Sidebar({
 
                     <button onClick={onStep}>Step</button>
 
+                    <button onClick={onEpoch}>Epoch</button>
+
+                    <button
+                        className={isPlaying ? "active" : ""}
+                        onClick={onPlayToggle}
+                    >
+                        {isPlaying ? "Pause" : "Play"}
+                    </button>
+
                     <button className="secondary" onClick={onReset}>Reset</button>
 
                 </div>
+            </div>
+
+            <div className="sidebar-section sidebar-authors">
+                <h3>Developed by:</h3>
+
+                <ul>
+                    {AUTHORS.map(author => (
+                        <li key={author.email}>
+                            <span>{author.name}</span>
+                            <a href={`mailto:${author.email}`}>
+                                {author.email}
+                            </a>
+                        </li>
+                    ))}
+                </ul>
             </div>
         </aside>
     )

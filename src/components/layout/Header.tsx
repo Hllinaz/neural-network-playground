@@ -1,18 +1,26 @@
 import "./Header.css";
 
+const DOCUMENTATION_URL = "https://github.com/Hllinaz/neural-visualizer/wiki"
+
 export function Header() {
 
     return (
 
         <header className="header">
-            <h2
-                style={{
-                    margin: 0,
-                    fontWeight: 600
-                }}
+            <div className="header-title">
+                <h2>
+                    Neural Network Visualizer
+                </h2>
+            </div>
+
+            <a
+                className="header-docs-link"
+                href={DOCUMENTATION_URL}
+                target="_blank"
+                rel="noreferrer"
             >
-                Neural Network Visualizer
-            </h2>
+                Documentation
+            </a>
         </header>
     )
 }

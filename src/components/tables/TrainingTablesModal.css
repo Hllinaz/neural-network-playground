@@ -1,0 +1,154 @@
+.table-modal-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 40;
+    display: grid;
+    place-items: center;
+    padding: 28px;
+    background: rgba(15, 23, 42, 0.42);
+}
+
+.table-modal {
+    width: min(1120px, 100%);
+    max-height: min(760px, 92vh);
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr);
+    gap: 18px;
+    border: 1px solid #dbe3ef;
+    border-radius: 12px;
+    background: #ffffff;
+    box-shadow: 0 24px 80px rgba(15, 23, 42, 0.22);
+    padding: 20px;
+}
+
+.table-modal-header,
+.table-preview-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.table-modal-header h2,
+.table-preview-header h3 {
+    margin: 0;
+    color: #111827;
+}
+
+.table-modal-header h2 {
+    font-size: 20px;
+}
+
+.table-modal-header p {
+    margin: 4px 0 0;
+    color: #64748b;
+    font-size: 13px;
+}
+
+.table-modal-close,
+.table-preview-header button {
+    height: 36px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    background: #ffffff;
+    color: #111827;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.table-modal-close {
+    width: 36px;
+}
+
+.table-preview-header button {
+    padding: 0 12px;
+}
+
+.table-modal-close:hover,
+.table-preview-header button:hover {
+    background: #f8fafc;
+}
+
+.table-modal-content {
+    min-height: 0;
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr);
+    gap: 14px;
+    overflow-y: auto;
+    padding-right: 4px;
+}
+
+.table-tabs {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    padding: 4px;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    background: #f8fafc;
+}
+
+.table-tabs button {
+    height: 36px;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    background: transparent;
+    color: #475569;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.table-tabs button.active {
+    border-color: #2563eb;
+    background: #ffffff;
+    color: #1d4ed8;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.08);
+}
+
+.table-preview {
+    min-width: 0;
+    min-height: 0;
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr);
+    gap: 10px;
+}
+
+.table-preview-header h3 {
+    font-size: 15px;
+}
+
+.table-scroll {
+    min-height: 0;
+    overflow: auto;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+}
+
+.table-scroll table {
+    width: 100%;
+    min-width: 720px;
+    border-collapse: collapse;
+    font-size: 12px;
+}
+
+.table-scroll th,
+.table-scroll td {
+    padding: 8px 10px;
+    border-bottom: 1px solid #e5e7eb;
+    text-align: right;
+    white-space: nowrap;
+}
+
+.table-scroll th {
+    position: sticky;
+    top: 0;
+    background: #f8fafc;
+    color: #334155;
+    font-weight: 700;
+}
+
+.table-scroll td {
+    color: #111827;
+}

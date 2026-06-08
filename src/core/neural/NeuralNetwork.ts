@@ -10,6 +10,7 @@ interface NeuralNetworkConfig {
     activation: Activation
     loss: LossFunction
     initializer: WeightInitializer
+    biasInitializer?: (layerIndex: number, nodeIndex: number) => number
 }
 
 export class NeuralNetwork {
@@ -24,7 +25,8 @@ export class NeuralNetwork {
             architecture,
             activation,
             loss,
-            initializer
+            initializer,
+            biasInitializer
         } = config
 
         this.loss = loss
@@ -38,7 +40,9 @@ export class NeuralNetwork {
                 nodes.push(
                     new Node(
                         i === 0 ? null : activation, 
-                        i, j)
+                        i,
+                        j,
+                        i === 0 ? 0 : (biasInitializer?.(i, j) ?? 0))
                 )
             }
 
@@ -151,5 +155,17 @@ export class NeuralNetwork {
                 }
             }
         }
+    }
+
+    setBias(
+        layerIndex: number,
+        nodeIndex: number,
+        value: number
+    ) {
+        const node = this.layers[layerIndex]?.nodes[nodeIndex]
+
+        if (!node || layerIndex === 0) return
+
+        node.bias = value
     }
 }

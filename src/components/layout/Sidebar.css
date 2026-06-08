@@ -107,8 +107,59 @@
     background: #f9fafb;
 }
 
-.playback-buttons {
+.sidebar button:disabled {
+    cursor: not-allowed;
+    background: #f8fafc;
+    color: #94a3b8;
+}
+
+.playback-buttons,
+.download-buttons {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 8px;
+}
+
+.sidebar-authors {
+    margin-top: auto;
+    padding-top: 18px;
+    border-top: 1px solid #e5e7eb;
+    gap: 8px;
+}
+
+.sidebar-authors h3 {
+    color: #475569;
+    font-size: 13px;
+    text-transform: uppercase;
+}
+
+.sidebar-authors ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: 4px;
+}
+
+.sidebar-authors li {
+    display: grid;
+    gap: 2px;
+    color: #64748b;
+    font-size: 13px;
+    line-height: 1.4;
+}
+
+.sidebar-authors span {
+    color: #334155;
+    font-weight: 600;
+}
+
+.sidebar-authors a {
+    color: #2563eb;
+    text-decoration: none;
+    overflow-wrap: anywhere;
+}
+
+.sidebar-authors a:hover {
+    text-decoration: underline;
 }

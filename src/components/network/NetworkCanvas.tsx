@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useRef } from "react"
 import { getNodeState } from "../../core/visual/getNodeState" 
 import { getConnectionState } from "../../core/visual/getConnectionState"
 import { BackwardNodeTrace } from "../../core/trace/BackwardNodeTrace"
@@ -32,10 +32,7 @@ export function NetworkCanvas({
     snapshot,
     controller,
     selectedWeightId,
-    selectedWeightValue,
     onSelectedWeightChange,
-    onWeightValueChange,
-    canEditWeights,
     inputs,
     outputs,
     onInputChange,
@@ -43,7 +40,6 @@ export function NetworkCanvas({
 }: Props) {
 
     const canvasRef = useRef<HTMLCanvasElement | null>(null)
-    const [canvasSize, setCanvasSize] = useState({ width: 0, height: 0 })
 
     useEffect(() => {
 
@@ -63,11 +59,6 @@ export function NetworkCanvas({
         const displayWidth = parent.clientWidth
         const displayHeight = parent.clientHeight
 
-        setCanvasSize({
-            width: displayWidth,
-            height: displayHeight
-        })
-
         canvas.width = displayWidth * pixelRatio
         canvas.height = displayHeight * pixelRatio
 
@@ -86,13 +77,6 @@ export function NetworkCanvas({
         )
 
     }, [snapshot, controller, selectedWeightId])
-
-    const editorPosition = getConnectionEditorPosition(
-        snapshot,
-        selectedWeightId,
-        canvasSize.width,
-        canvasSize.height
-    )
 
     return (
         <div className="network-canvas-frame">
@@ -121,7 +105,7 @@ export function NetworkCanvas({
                 }}
             />
 
-            {editorPosition && (
+            {/* {editorPosition && (
                 <div
                     className={
                         canEditWeights
@@ -150,7 +134,7 @@ export function NetworkCanvas({
                         }}
                     />
                 </div>
-            )}
+            )} */}
 
             <SamplePanel
                 inputs={inputs}
@@ -762,39 +746,6 @@ function formatValue(value: number) {
     return normalized.toFixed(4)
 }
 
-function getConnectionEditorPosition(
-    snapshot: NetworkSnapshot,
-    selectedWeightId: string,
-    width: number,
-    height: number
-) {
-    if (!selectedWeightId || width <= 0 || height <= 0) return null
-
-    const connection = findConnectionById(snapshot, selectedWeightId)
-    if (!connection) return null
-
-    const structure = snapshot.layers.map(layer => layer.nodes.length)
-    const origin = getNodePosition(
-        width,
-        height,
-        structure,
-        connection.sourceLayer,
-        connection.sourceNode
-    )
-    const target = getNodePosition(
-        width,
-        height,
-        structure,
-        connection.targetLayer,
-        connection.targetNode
-    )
-
-    return {
-        x: origin.x + (target.x - origin.x) * 0.5,
-        y: origin.y + (target.y - origin.y) * 0.5 - 46
-    }
-}
-
 function findConnectionAtPoint(
     snapshot: NetworkSnapshot,
     x: number,
@@ -847,28 +798,6 @@ function findConnectionAtPoint(
     }
 
     return closestDistance <= 12 ? closestId : ""
-}
-
-function findConnectionById(
-    snapshot: NetworkSnapshot,
-    selectedWeightId: string
-) {
-    for (const layer of snapshot.layers) {
-        for (const node of layer.nodes) {
-            const connection = node.outgoing.find(conn =>
-                connectionId(
-                    conn.sourceLayer,
-                    conn.sourceNode,
-                    conn.targetLayer,
-                    conn.targetNode
-                ) === selectedWeightId
-            )
-
-            if (connection) return connection
-        }
-    }
-
-    return null
 }
 
 function distanceToSegment(
