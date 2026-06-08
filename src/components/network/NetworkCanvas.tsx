@@ -9,6 +9,7 @@ import type {
     ConnectionSnapshot,
     NetworkSnapshot
 } from "../../core/snapshot/NetworkSnapshot"
+import { NumberInput } from "../inputs/NumberInput"
 
 import { THEME } from "../../theme/theme"
 
@@ -172,17 +173,10 @@ function SamplePanel({
                     {inputs.map((value, index) => (
                         <label key={index} className="sample-value-cell">
                             <span>x{index}</span>
-                            <input
-                                type="number"
+                            <NumberInput
                                 step="0.01"
                                 value={value}
-                                onChange={(event) => {
-                                    const nextValue = event.target.valueAsNumber
-
-                                    if (Number.isFinite(nextValue)) {
-                                        onInputChange(index, nextValue)
-                                    }
-                                }}
+                                onValueChange={(nextValue) => onInputChange(index, nextValue)}
                             />
                         </label>
                     ))}
@@ -196,17 +190,10 @@ function SamplePanel({
                     {outputs.map((value, index) => (
                         <label key={index} className="sample-value-cell">
                             <span>y{index}</span>
-                            <input
-                                type="number"
+                            <NumberInput
                                 step="0.01"
                                 value={value}
-                                onChange={(event) => {
-                                    const nextValue = event.target.valueAsNumber
-
-                                    if (Number.isFinite(nextValue)) {
-                                        onOutputChange(index, nextValue)
-                                    }
-                                }}
+                                onValueChange={(nextValue) => onOutputChange(index, nextValue)}
                             />
                         </label>
                     ))}

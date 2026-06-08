@@ -6,6 +6,7 @@ import {
     HeInitializer,
     XavierInitializer
 } from "../../core/neural/WeightInitializer"
+import { NumberInput } from "../inputs/NumberInput"
 
 export const ACTIVATIONS = {
     sigmoid: Sigmoid,
@@ -199,20 +200,13 @@ export function Sidebar({
                 <div className="sidebar-field">
                     <label>Initial Weight</label>
 
-                    <input
-                        type="number"
+                    <NumberInput
                         step="0.01"
                         disabled={!canEditWeights}
                         value={Number.isFinite(selectedWeightValue)
                             ? selectedWeightValue
                             : 0}
-                        onChange={(e) => {
-                            const value = e.target.valueAsNumber
-
-                            if (Number.isFinite(value)) {
-                                onWeightValueChange(value)
-                            }
-                        }}
+                        onValueChange={onWeightValueChange}
                     />
                 </div>
 
@@ -257,20 +251,13 @@ export function Sidebar({
                 <div className="sidebar-field">
                     <label>Initial Bias</label>
 
-                    <input
-                        type="number"
+                    <NumberInput
                         step="0.01"
                         disabled={!canEditBiases}
                         value={Number.isFinite(selectedBiasValue)
                             ? selectedBiasValue
                             : 0}
-                        onChange={(e) => {
-                            const value = e.target.valueAsNumber
-
-                            if (Number.isFinite(value)) {
-                                onBiasValueChange(value)
-                            }
-                        }}
+                        onValueChange={onBiasValueChange}
                     />
                 </div>
 
@@ -296,11 +283,10 @@ export function Sidebar({
                 <div className="sidebar-field">
                     <label>Learning Rate</label>
 
-                    <input
-                        type="number"
+                    <NumberInput
                         step="0.01"
                         value={learningRate}
-                        onChange={(e) => onLearningRateChange(Number(e.target.value))}
+                        onValueChange={onLearningRateChange}
                     />
                 </div>
 
