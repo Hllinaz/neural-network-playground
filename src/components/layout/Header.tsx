@@ -12,7 +12,7 @@ import "./Header.css";
 
 const DOCUMENTATION_URL = "https://github.com/Hllinaz/neural-network-playground/wiki"
 const HEADER_TITLE = "Neural Network Playground"
-// const HEADER_SUBTITLE = "Interactive training and loss visualization"
+const HEADER_SUBTITLE = "NN Playground"
 
 interface Props {
     isPlaying: boolean
@@ -92,7 +92,7 @@ export function Header({
 
             <div className="header-title">
                 <h2> {HEADER_TITLE} </h2>
-                {/* <p>{HEADER_SUBTITLE}</p> */}
+                <p>{HEADER_SUBTITLE}</p>
             </div>
 
             <a
