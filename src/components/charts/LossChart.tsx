@@ -27,6 +27,17 @@ interface Props {
 
 type ExportFormat = "svg" | "png" | "pdf"
 
+const EXPORT_CHART_TITLE = "Loss Chart"
+const EXPORT_X_AXIS_LABEL = "Epoch"
+const EXPORT_Y_AXIS_LABEL = "Loss"
+const EXPORT_TOP_OFFSET = 36
+const EXPORT_LEFT_OFFSET = 11
+const EXPORT_BOTTOM_OFFSET = 11
+const EXPORT_RIGHT_OFFSET = 8
+const EXPORT_TITLE_Y = 20
+const EXPORT_X_LABEL_BOTTOM_GAP = 15
+const EXPORT_Y_LABEL_X = 15
+
 export function LossChart({ data }: Props) {
     const chartRef = useRef<HTMLDivElement | null>(null)
     const exportMenuRef = useRef<HTMLDivElement | null>(null)
@@ -186,25 +197,101 @@ export function LossChart({ data }: Props) {
 function createExportableSvg(svg: SVGSVGElement) {
     const clone = svg.cloneNode(true) as SVGSVGElement
     const { width, height } = svg.getBoundingClientRect()
-    const exportWidth = Math.ceil(width)
-    const exportHeight = Math.ceil(height)
+    const chartWidth = Math.ceil(width)
+    const chartHeight = Math.ceil(height)
+    const exportWidth = chartWidth + EXPORT_LEFT_OFFSET + EXPORT_RIGHT_OFFSET
+    const exportHeight = chartHeight + EXPORT_TOP_OFFSET + EXPORT_BOTTOM_OFFSET
 
     clone.setAttribute("xmlns", "http://www.w3.org/2000/svg")
-    clone.setAttribute("width", String(exportWidth))
-    clone.setAttribute("height", String(exportHeight))
-    clone.setAttribute("viewBox", `0 0 ${exportWidth} ${exportHeight}`)
+    clone.setAttribute("x", String(EXPORT_LEFT_OFFSET))
+    clone.setAttribute("y", String(EXPORT_TOP_OFFSET))
+    clone.setAttribute("width", String(chartWidth))
+    clone.setAttribute("height", String(chartHeight))
+    clone.setAttribute("viewBox", `0 0 ${chartWidth} ${chartHeight}`)
+
+    const exportSvg = document.createElementNS("http://www.w3.org/2000/svg", "svg")
+
+    exportSvg.setAttribute("xmlns", "http://www.w3.org/2000/svg")
+    exportSvg.setAttribute("width", String(exportWidth))
+    exportSvg.setAttribute("height", String(exportHeight))
+    exportSvg.setAttribute("viewBox", `0 0 ${exportWidth} ${exportHeight}`)
 
     const background = document.createElementNS("http://www.w3.org/2000/svg", "rect")
     background.setAttribute("width", "100%")
     background.setAttribute("height", "100%")
     background.setAttribute("fill", "#ffffff")
-    clone.insertBefore(background, clone.firstChild)
+    exportSvg.appendChild(background)
+
+    const title = createExportText(EXPORT_CHART_TITLE, exportWidth / 2, EXPORT_TITLE_Y, {
+        anchor: "middle",
+        size: 16,
+        weight: "700",
+        fill: "#111827"
+    })
+
+    const xLabel = createExportText(
+        EXPORT_X_AXIS_LABEL,
+        EXPORT_LEFT_OFFSET + chartWidth / 2,
+        exportHeight - EXPORT_X_LABEL_BOTTOM_GAP,
+        {
+        anchor: "middle",
+        size: 12,
+        weight: "700",
+        fill: "#475569"
+        }
+    )
+
+    const yLabelY = EXPORT_TOP_OFFSET + chartHeight / 2
+    const yLabel = createExportText(
+        EXPORT_Y_AXIS_LABEL,
+        EXPORT_Y_LABEL_X,
+        yLabelY,
+        {
+            anchor: "middle",
+            size: 12,
+            weight: "700",
+            fill: "#475569"
+        }
+    )
+
+    yLabel.setAttribute("transform", `rotate(-90 ${EXPORT_Y_LABEL_X} ${yLabelY})`)
+
+    exportSvg.appendChild(title)
+    exportSvg.appendChild(yLabel)
+    exportSvg.appendChild(clone)
+    exportSvg.appendChild(xLabel)
 
     return {
-        text: new XMLSerializer().serializeToString(clone),
+        text: new XMLSerializer().serializeToString(exportSvg),
         width: exportWidth,
         height: exportHeight
     }
+}
+
+function createExportText(
+    text: string,
+    x: number,
+    y: number,
+    options: {
+        anchor: "start" | "middle" | "end"
+        size: number
+        weight: string
+        fill: string
+    }
+) {
+    const element = document.createElementNS("http://www.w3.org/2000/svg", "text")
+
+    element.textContent = text
+    element.setAttribute("x", String(x))
+    element.setAttribute("y", String(y))
+    element.setAttribute("text-anchor", options.anchor)
+    element.setAttribute("font-family", "Inter, Arial, sans-serif")
+    element.setAttribute("font-size", String(options.size))
+    element.setAttribute("font-weight", options.weight)
+    element.setAttribute("fill", options.fill)
+    element.setAttribute("dominant-baseline", "middle")
+
+    return element
 }
 
 function svgToCanvas(svgText: string, width: number, height: number) {
