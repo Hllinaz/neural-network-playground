@@ -35,6 +35,11 @@
     white-space: nowrap;
 }
 
+.loss-chart-export {
+    position: relative;
+    flex: 0 0 auto;
+}
+
 .loss-chart-download {
     display: grid;
     place-items: center;
@@ -67,6 +72,56 @@
 .loss-chart-download:disabled {
     cursor: not-allowed;
     opacity: 0.45;
+}
+
+.loss-chart-download svg {
+    display: block;
+}
+
+.loss-chart-export-menu {
+    position: absolute;
+    top: calc(100% + 6px);
+    right: 0;
+    z-index: 5;
+    min-width: 104px;
+    display: grid;
+    gap: 2px;
+    padding: 5px;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    background: #ffffff;
+    box-shadow: 0 12px 28px rgba(15, 23, 42, 0.14);
+}
+
+.loss-chart-export-menu button {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    height: 30px;
+    border: 0;
+    border-radius: 6px;
+    background: transparent;
+    color: #334155;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 0 8px;
+    text-align: left;
+}
+
+.loss-chart-export-menu button:hover {
+    background: #eff6ff;
+    color: #1d4ed8;
+}
+
+.loss-chart-export-menu button:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.14);
+}
+
+.loss-chart-export-menu svg {
+    display: block;
+    flex: 0 0 auto;
 }
 
 .loss-chart-body {
